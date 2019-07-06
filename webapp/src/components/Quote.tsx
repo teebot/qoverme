@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent } from "react";
 import {
   Grid,
   Paper,
@@ -22,27 +22,37 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 type QuoteProps = {
   age?: number;
+  carBrand?: string;
+  carPurchasePrice?: number;
   setAge: (age?: number) => void;
   setCarBrand: (carBrand: string) => void;
+  setCarPurchasePrice: (carPurchasePrice?: number) => void;
 };
 
 export default function Quote(props: QuoteProps) {
   const classes = useStyles();
-  const { age, setAge, setCarBrand } = props;
-  // const [age, setAge] = useState<string>("");
-  const onSetAge = (event: ChangeEvent<HTMLInputElement>) => {
+  const {
+    age,
+    carBrand,
+    carPurchasePrice,
+    setAge,
+    setCarBrand,
+    setCarPurchasePrice
+  } = props;
+
+  const setNumber = (cb: (x?: number) => void) => (
+    event: ChangeEvent<HTMLInputElement>
+  ) => {
     const parsed = parseFloat(event.target.value);
     if (isNaN(parsed)) {
-      setAge(undefined);
+      cb(undefined);
       return;
     }
-    setAge(parsed);
+    cb(parsed);
   };
 
-  const onSetCarBrand = (
-    event: ChangeEvent<{ name?: string; value: any }>
-  ) => {};
-  // setCarBrand(event.target.value);
+  const onSetCarBrand = (event: ChangeEvent<{ name?: string; value: any }>) =>
+    setCarBrand(event.target.value);
 
   return (
     <Grid
@@ -64,11 +74,11 @@ export default function Quote(props: QuoteProps) {
                 margin="normal"
                 name="age"
                 value={age || ""}
-                onChange={onSetAge}
+                onChange={setNumber(setAge)}
               />
             </FormControl>
 
-            {/* <FormControl>
+            <FormControl>
               <label>Car</label>
               <Select
                 native
@@ -77,11 +87,12 @@ export default function Quote(props: QuoteProps) {
                 }}
                 onChange={onSetCarBrand}
               >
+                <option value="audi">AUDI</option>
                 <option value="bmw">BMW</option>
               </Select>
-            </FormControl> */}
+            </FormControl>
 
-            {/* <FormControl>
+            <FormControl>
               <label>Purchase Price</label>
               <TextField
                 id="purchasePrice"
@@ -89,8 +100,9 @@ export default function Quote(props: QuoteProps) {
                 type="number"
                 margin="normal"
                 name="purchasePrice"
+                onChange={setNumber(setCarPurchasePrice)}
               />
-            </FormControl> */}
+            </FormControl>
           </form>
           <Button color="primary" variant="contained">
             Get a price

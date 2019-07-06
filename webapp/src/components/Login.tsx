@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Grid,
   Paper,
@@ -12,6 +12,10 @@ import {
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 import logo from "../logo.svg";
+import { useMutation } from "react-apollo";
+import { AUTHENTICATE_MUTATION } from "../gql/mutations";
+import { History } from "history";
+import { LOCALSTORAGE_TOKEN } from "../constants";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -23,8 +27,34 @@ const useStyles = makeStyles((theme: Theme) => ({
   }
 }));
 
-export default function Login() {
+export default function Login(props: { history: History }) {
   const classes = useStyles();
+  const { history } = props;
+  const [username, setUsername] = useState<string>();
+  const [password, setPassword] = useState<string>();
+
+  const [mutate] = useMutation<{ authenticate: { token: string } }>(
+    AUTHENTICATE_MUTATION
+  );
+  const handleLogin = async () => {
+    await mutate({
+      variables: {
+        username,
+        password
+      },
+      update: (_, result) => {
+        if (!result.data || !result.data.authenticate) {
+          throw Error("Invalid Gql response");
+        }
+        localStorage.setItem(
+          LOCALSTORAGE_TOKEN,
+          result.data.authenticate.token
+        );
+        history.push("/quote");
+      }
+    });
+  };
+
   return (
     <Grid
       container
@@ -43,12 +73,13 @@ export default function Login() {
           </Typography>
           <form className={classes.form}>
             <TextField
-              id="email"
-              label="Email"
+              id="username"
+              label="Username"
               className={classes.textField}
-              type="email"
-              autoComplete="current-email"
+              type="text"
+              autoComplete="current-username"
               margin="normal"
+              onChange={e => setUsername(e.target.value)}
             />
             <TextField
               id="password"
@@ -57,6 +88,7 @@ export default function Login() {
               type="password"
               autoComplete="current-password"
               margin="normal"
+              onChange={e => setPassword(e.target.value)}
             />
             <FormControlLabel
               control={<Checkbox value="rememberMe" color="primary" />}
@@ -64,7 +96,7 @@ export default function Login() {
             />
             <Link color="secondary">Forgot your password?</Link>
           </form>
-          <Button color="secondary" variant="contained">
+          <Button color="secondary" onClick={handleLogin} variant="contained">
             Sign in to your account
           </Button>
         </Paper>

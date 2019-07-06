@@ -1,0 +1,34 @@
+import { createMuiTheme } from "@material-ui/core";
+export const theme = createMuiTheme({
+  typography: {
+    // useNextVariants: true,
+    fontFamily: [
+      "-apple-system",
+      "BlinkMacSystemFont",
+      '"Segoe UI"',
+      "Roboto",
+      '"Helvetica Neue"',
+      "Arial",
+      "sans-serif",
+      '"Apple Color Emoji"',
+      '"Segoe UI Emoji"',
+      '"Segoe UI Symbol"'
+    ].join(",")
+  },
+  palette: {
+    primary: {
+      main: "#31cfda"
+    },
+    secondary: {
+      main: "#317bda",
+      contrastText: "#fff"
+    }
+  },
+  overrides: {
+    MuiList: {
+      root: {
+        background: "#fff"
+      }
+    }
+  }
+});
