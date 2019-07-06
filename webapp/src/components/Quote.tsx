@@ -1,4 +1,4 @@
-import React, { ChangeEvent } from "react";
+import React from "react";
 import {
   Grid,
   Paper,
@@ -6,9 +6,12 @@ import {
   Theme,
   TextField,
   FormControl,
-  Select
+  Select,
+  FormHelperText
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
+import { Formik } from "formik";
+import { History } from "history";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -21,92 +24,134 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 type QuoteProps = {
-  age?: number;
-  carBrand?: string;
-  carPurchasePrice?: number;
-  setAge: (age?: number) => void;
-  setCarBrand: (carBrand: string) => void;
-  setCarPurchasePrice: (carPurchasePrice?: number) => void;
+  setQuoteParams: (params: {
+    age: number;
+    carBrand: string;
+    carPurchasePrice: number;
+  }) => void;
+  history: History;
+  initialState: {
+    age?: number;
+    carBrand: string;
+    carPurchasePrice?: number;
+  };
 };
 
 export default function Quote(props: QuoteProps) {
   const classes = useStyles();
-  const {
-    age,
-    carBrand,
-    carPurchasePrice,
-    setAge,
-    setCarBrand,
-    setCarPurchasePrice
-  } = props;
-
-  const setNumber = (cb: (x?: number) => void) => (
-    event: ChangeEvent<HTMLInputElement>
-  ) => {
-    const parsed = parseFloat(event.target.value);
-    if (isNaN(parsed)) {
-      cb(undefined);
-      return;
-    }
-    cb(parsed);
-  };
-
-  const onSetCarBrand = (event: ChangeEvent<{ name?: string; value: any }>) =>
-    setCarBrand(event.target.value);
+  const { history, setQuoteParams } = props;
 
   return (
-    <Grid
-      container
-      justify="center"
-      spacing={6}
-      alignItems="center"
-      direction="column"
-    >
+    <Grid container justify="center" spacing={6} alignItems="center">
       <Grid item>
         <Paper className={classes.root}>
-          <form className={classes.form}>
-            <FormControl>
-              <label>Age</label>
-              <TextField
-                id="age"
-                className={classes.textField}
-                type="text"
-                margin="normal"
-                name="age"
-                value={age || ""}
-                onChange={setNumber(setAge)}
-              />
-            </FormControl>
+          <Formik
+            initialValues={props.initialState}
+            validate={values => {
+              const errors: { [k: string]: string } = {};
+              if (!values.age) {
+                errors.age = "Required";
+              } else if (values.age < 18) {
+                errors.age = "Sorry! The driver is too young";
+              } else if (!values.carPurchasePrice) {
+                errors.carPurchasePrice = "Required";
+              } else if (values.carPurchasePrice < 5000) {
+                errors.carPurchasePrice =
+                  "Sorry! The price of the car is too low";
+              } else if (!values.carBrand) {
+                errors.carBrand = "Required";
+              } else if (
+                values.carBrand === "porsche" &&
+                values.age &&
+                values.age < 25
+              ) {
+                errors.carBrand =
+                  "Sorry! We can not accept this particular risk";
+              }
+              return errors;
+            }}
+            onSubmit={(values, { setSubmitting }) => {
+              setSubmitting(true);
+              if (values.age && values.carBrand && values.carPurchasePrice) {
+                setQuoteParams({
+                  age: values.age,
+                  carBrand: values.carBrand,
+                  carPurchasePrice: values.carPurchasePrice
+                });
+                history.push("/price");
+              }
+            }}
+          >
+            {({
+              values,
+              errors,
+              touched,
+              handleChange,
+              handleBlur,
+              isValid,
+              isSubmitting,
+              handleSubmit
+            }) => (
+              <form className={classes.form} onSubmit={handleSubmit}>
+                <FormControl>
+                  <label>Age</label>
+                  <TextField
+                    type="text"
+                    name="age"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.age || ""}
+                  />
+                  {errors.age && touched.age && (
+                    <FormHelperText>{errors.age}</FormHelperText>
+                  )}
+                </FormControl>
 
-            <FormControl>
-              <label>Car</label>
-              <Select
-                native
-                inputProps={{
-                  name: "brand"
-                }}
-                onChange={onSetCarBrand}
-              >
-                <option value="audi">AUDI</option>
-                <option value="bmw">BMW</option>
-              </Select>
-            </FormControl>
+                <FormControl>
+                  <label>Car</label>
+                  <Select
+                    native
+                    inputProps={{
+                      name: "carBrand"
+                    }}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.carBrand || ""}
+                  >
+                    <option value="" />
+                    <option value="audi">AUDI</option>
+                    <option value="bmw">BMW</option>
+                    <option value="porsche">PORSCHE</option>
+                  </Select>
+                  {errors.carBrand && touched.carBrand && (
+                    <FormHelperText>{errors.carBrand}</FormHelperText>
+                  )}
+                </FormControl>
 
-            <FormControl>
-              <label>Purchase Price</label>
-              <TextField
-                id="purchasePrice"
-                className={classes.textField}
-                type="number"
-                margin="normal"
-                name="purchasePrice"
-                onChange={setNumber(setCarPurchasePrice)}
-              />
-            </FormControl>
-          </form>
-          <Button color="primary" variant="contained">
-            Get a price
-          </Button>
+                <FormControl>
+                  <label>Purchase Price</label>
+                  <TextField
+                    type="text"
+                    name="carPurchasePrice"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.carPurchasePrice || ""}
+                  />
+                  {errors.carPurchasePrice &&
+                    touched.carPurchasePrice &&
+                    errors.carPurchasePrice}
+                </FormControl>
+                <Button
+                  type="submit"
+                  color="primary"
+                  variant="contained"
+                  disabled={isSubmitting || !isValid}
+                >
+                  Get a price
+                </Button>
+              </form>
+            )}
+          </Formik>
         </Paper>
       </Grid>
     </Grid>

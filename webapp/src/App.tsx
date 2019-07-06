@@ -1,21 +1,22 @@
 import React, { useReducer } from "react";
-import { Link, BrowserRouter, Route } from "react-router-dom";
+import { BrowserRouter, Route } from "react-router-dom";
 import Login from "./components/Login";
 import Quote from "./components/Quote";
 import Price from "./components/Price";
 import { ThemeProvider } from "@material-ui/styles";
 import { theme } from "./theme";
 import { reducer, initialState } from "./state/state";
-import { setAge, setCarBrand, setCarPurchasePrice } from "./state/actions";
+import { setQuoteParams, setInvoiceFreq } from "./state/actions";
 import { gqlClient } from "./gql/client";
 import { ApolloProvider } from "react-apollo";
+import { calcPlans } from "./state/calc-plans";
 
 const App: React.FC = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   return (
     <div className="App">
-      {JSON.stringify(state)}
+      {/* {JSON.stringify(state)} */}
       <ApolloProvider client={gqlClient}>
         <ThemeProvider theme={theme}>
           <BrowserRouter>
@@ -24,24 +25,32 @@ const App: React.FC = () => {
               <Route
                 path="/quote"
                 exact
-                render={() => (
+                render={({ history }) => (
                   <Quote
-                    age={state.age}
-                    carBrand={state.carBrand}
-                    carPurchasePrice={state.carPurchasePrice}
-                    setAge={(age?: number) => dispatch(setAge(age))}
-                    setCarBrand={(carBrand: string) =>
-                      dispatch(setCarBrand(carBrand))
-                    }
-                    setCarPurchasePrice={(carPurchasePrice?: number) =>
-                      dispatch(setCarPurchasePrice(carPurchasePrice))
-                    }
+                    initialState={{
+                      age: state.age,
+                      carBrand: state.carBrand,
+                      carPurchasePrice: state.carPurchasePrice
+                    }}
+                    history={history}
+                    setQuoteParams={params => dispatch(setQuoteParams(params))}
                   />
                 )}
               />
-              <Route path="/price" exact render={() => <Price {...state} />} />
+              <Route
+                path="/price"
+                exact
+                render={({ history }) => (
+                  <Price
+                    plans={calcPlans(state)}
+                    history={history}
+                    invoiceFreq={state.invoiceFreq}
+                    setInvoiceFreq={freq => dispatch(setInvoiceFreq(freq))}
+                  />
+                )}
+              />
             </div>
-            <nav>
+            {/* <nav>
               <ul>
                 <li>
                   <Link to="/">Login</Link>
@@ -53,7 +62,7 @@ const App: React.FC = () => {
                   <Link to="/price">Price</Link>
                 </li>
               </ul>
-            </nav>
+            </nav> */}
           </BrowserRouter>
         </ThemeProvider>
       </ApolloProvider>

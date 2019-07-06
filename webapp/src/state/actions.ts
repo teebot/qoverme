@@ -1,44 +1,35 @@
-export const SET_AGE = "SET_AGE";
-export const SET_CAR_BRAND = "SET_CAR_BRAND";
-export const SET_CAR_PURCHASE_PRICE = "SET_CAR_PURCHASE_PRICE";
+import { InvoiceFreq } from "../types/invoice-freq.type";
 
-type SetAgeAction = {
-  type: typeof SET_AGE;
-  payload: { age?: number };
+export const SET_QUOTE_PARAMS = "SET_QUOTE_PARAMS";
+export const SET_INVOICE_FREQ = "SET_INVOICE_FREQ";
+
+type SetQuoteParams = {
+  type: typeof SET_QUOTE_PARAMS;
+  payload: { age: number; carBrand: string; carPurchasePrice: number };
 };
 
-type SetCarBrandAction = {
-  type: typeof SET_CAR_BRAND;
-  payload: { carBrand: string };
+type SetInvoiceFreq = {
+  type: typeof SET_INVOICE_FREQ;
+  payload: { invoiceFreq: InvoiceFreq };
 };
 
-type SetCarPurchasePriceAction = {
-  type: typeof SET_CAR_PURCHASE_PRICE;
-  payload: { carPurchasePrice?: number };
-};
-
-export function setAge(age?: number): Action {
+export function setQuoteParams(params: {
+  age: number;
+  carBrand: string;
+  carPurchasePrice: number;
+}): Action {
+  const { age, carBrand, carPurchasePrice } = params;
   return {
-    type: SET_AGE,
-    payload: { age }
+    type: SET_QUOTE_PARAMS,
+    payload: { age, carBrand, carPurchasePrice }
   };
 }
 
-export function setCarBrand(carBrand: string): Action {
+export function setInvoiceFreq(invoiceFreq: InvoiceFreq): Action {
   return {
-    type: SET_CAR_BRAND,
-    payload: { carBrand }
+    type: SET_INVOICE_FREQ,
+    payload: { invoiceFreq }
   };
 }
 
-export function setCarPurchasePrice(carPurchasePrice?: number): Action {
-  return {
-    type: SET_CAR_PURCHASE_PRICE,
-    payload: { carPurchasePrice }
-  };
-}
-
-export type Action =
-  | SetAgeAction
-  | SetCarBrandAction
-  | SetCarPurchasePriceAction;
+export type Action = SetQuoteParams | SetInvoiceFreq;

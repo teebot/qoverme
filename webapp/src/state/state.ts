@@ -1,23 +1,15 @@
-import {
-  Action,
-  SET_AGE,
-  SET_CAR_BRAND,
-  SET_CAR_PURCHASE_PRICE
-} from "./actions";
+import { Action, SET_QUOTE_PARAMS, SET_INVOICE_FREQ } from "./actions";
+import { InvoiceFreq } from "../types/invoice-freq.type";
 
 export const reducer = (state: State, action: Action) => {
   switch (action.type) {
-    case SET_AGE: {
-      const { age } = action.payload;
-      return { ...state, age };
+    case SET_QUOTE_PARAMS: {
+      const { age, carBrand, carPurchasePrice } = action.payload;
+      return { ...state, age, carBrand, carPurchasePrice };
     }
-    case SET_CAR_BRAND: {
-      const { carBrand } = action.payload;
-      return { ...state, carBrand };
-    }
-    case SET_CAR_PURCHASE_PRICE: {
-      const { carPurchasePrice } = action.payload;
-      return { ...state, carPurchasePrice };
+    case SET_INVOICE_FREQ: {
+      const { invoiceFreq } = action.payload;
+      return { ...state, invoiceFreq };
     }
     default: {
       console.warn("Invalid Action");
@@ -28,7 +20,8 @@ export const reducer = (state: State, action: Action) => {
 
 export type State = {
   age?: number;
-  carBrand?: string;
+  carBrand: string;
   carPurchasePrice?: number;
+  invoiceFreq: InvoiceFreq;
 };
-export const initialState: State = {};
+export const initialState: State = { invoiceFreq: "yearly", carBrand: "" };

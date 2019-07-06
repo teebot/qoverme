@@ -23,6 +23,12 @@ const typeDefs = gql`
     authenticate(username: String!, password: String!): Authentication
   }
 
+  type Plan {
+    carBrand: String!
+    carPurchasePrice: Float!
+    age: Int!
+  }
+
   type Authentication {
     token: String
     error: String
