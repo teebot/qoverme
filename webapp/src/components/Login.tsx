@@ -27,6 +27,11 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   textField: {
     display: "block"
+  },
+  accessBtn: {
+    textTransform: "none",
+    color: "rgba(255,255,255,0.8)",
+    marginTop: theme.spacing(2)
   }
 }));
 
@@ -123,11 +128,24 @@ export default function Login(props: { history: History }) {
               fullWidth
               color="secondary"
               variant="contained"
+              size="large"
             >
               Sign in to your account
             </Button>
           </form>
         </Paper>
+        <Grid container alignItems="center" justify="center">
+          <Button
+            fullWidth
+            className={classes.accessBtn}
+            size="large"
+            type="submit"
+            color="default"
+            variant="outlined"
+          >
+            Don’t have an account? Ask access
+          </Button>
+        </Grid>
       </Grid>
     </Grid>
   );
