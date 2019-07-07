@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, FormEvent } from "react";
 import {
   Grid,
   Paper,
@@ -19,9 +19,12 @@ import { LOCALSTORAGE_TOKEN } from "../constants";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
-    padding: theme.spacing(2)
+    padding: theme.spacing(2),
+    minWidth: "350px"
   },
-  form: {},
+  button: {
+    marginTop: theme.spacing(2)
+  },
   textField: {
     display: "block"
   }
@@ -36,7 +39,9 @@ export default function Login(props: { history: History }) {
   const [mutate] = useMutation<{ authenticate: { token: string } }>(
     AUTHENTICATE_MUTATION
   );
-  const handleLogin = async () => {
+  const handleLogin = async (e: FormEvent) => {
+    e.preventDefault();
+
     await mutate({
       variables: {
         username,
@@ -68,10 +73,15 @@ export default function Login(props: { history: History }) {
       </Grid>
       <Grid item>
         <Paper className={classes.root}>
-          <Typography variant="h5" component="h5">
+          <Typography
+            variant="h5"
+            align="center"
+            color="textSecondary"
+            component="h5"
+          >
             Welcome to Qover
           </Typography>
-          <form className={classes.form}>
+          <form onSubmit={handleLogin}>
             <TextField
               id="username"
               label="Username"
@@ -79,6 +89,7 @@ export default function Login(props: { history: History }) {
               type="text"
               autoComplete="current-username"
               margin="normal"
+              fullWidth
               onChange={e => setUsername(e.target.value)}
             />
             <TextField
@@ -86,19 +97,36 @@ export default function Login(props: { history: History }) {
               label="Password"
               className={classes.textField}
               type="password"
+              fullWidth
               autoComplete="current-password"
               margin="normal"
               onChange={e => setPassword(e.target.value)}
             />
-            <FormControlLabel
-              control={<Checkbox value="rememberMe" color="primary" />}
-              label="Remember me"
-            />
-            <Link color="secondary">Forgot your password?</Link>
+
+            <Grid spacing={6} container direction="row" alignItems="center">
+              <Grid item>
+                <FormControlLabel
+                  control={<Checkbox value="rememberMe" color="primary" />}
+                  label={<Typography variant="caption">Remember me</Typography>}
+                />
+              </Grid>
+              <Grid item>
+                <Link color="secondary" variant="caption">
+                  Forgot your password?
+                </Link>
+              </Grid>
+            </Grid>
+
+            <Button
+              type="submit"
+              className={classes.button}
+              fullWidth
+              color="secondary"
+              variant="contained"
+            >
+              Sign in to your account
+            </Button>
           </form>
-          <Button color="secondary" onClick={handleLogin} variant="contained">
-            Sign in to your account
-          </Button>
         </Paper>
       </Grid>
     </Grid>

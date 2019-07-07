@@ -59,35 +59,25 @@ export default function Price(props: PriceProps) {
   };
 
   return (
-    <Grid
-      container
-      justify="center"
-      spacing={6}
-      alignItems="center"
-      direction="column"
-    >
-      <Grid item>
-        <Paper className={classes.root}>
-          <form className={classes.form} />
-          <Switch
-            checked={invoiceFreq === "yearly"}
-            onChange={toggleInvoiceFreq}
-            inputProps={{ "aria-label": "secondary checkbox" }}
-          />
-          {plans.map((plan, i) => (
-            <div key={i}>
-              {plan.name} - {plan.price}
-              <Button
-                color="primary"
-                variant="contained"
-                onClick={() => saveQuote(plan)}
-              >
-                Select plan
-              </Button>
-            </div>
-          ))}
-        </Paper>
-      </Grid>
-    </Grid>
+    <Paper className={classes.root}>
+      <form className={classes.form} />
+      <Switch
+        checked={invoiceFreq === "yearly"}
+        onChange={toggleInvoiceFreq}
+        inputProps={{ "aria-label": "secondary checkbox" }}
+      />
+      {plans.map((plan, i) => (
+        <div key={i}>
+          {plan.name} - {plan.price}
+          <Button
+            color="primary"
+            variant="contained"
+            onClick={() => saveQuote(plan)}
+          >
+            Select plan
+          </Button>
+        </div>
+      ))}
+    </Paper>
   );
 }
