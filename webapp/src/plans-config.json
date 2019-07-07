@@ -1,0 +1,40 @@
+[
+  {
+    "name": "Global",
+    "coverage": {
+      "maxTravelDurationDays": 90,
+      "maxMedicalExpenseAmount": 1000000,
+      "abroadPersonalAssistanceAmount": 5000,
+      "abroadTravelAssistanceAmount": 1000
+    },
+    "yearlyFeeCents": {
+      "audi": 25000,
+      "bmw": 15000,
+      "porsche": 50000
+    },
+    "addedFeePercents": {
+      "audi": 0,
+      "bmw": 0,
+      "porsche": 0
+    }
+  },
+  {
+    "name": "Universe",
+    "coverage": {
+      "maxTravelDurationDays": 180,
+      "maxMedicalExpenseAmount": 3000000,
+      "abroadPersonalAssistanceAmount": 10000,
+      "abroadTravelAssistanceAmount": 2500
+    },
+    "yearlyFeeCents": {
+      "audi": 25000,
+      "bmw": 15000,
+      "porsche": 50000
+    },
+    "addedFeePercents": {
+      "audi": 0.3,
+      "bmw": 0.4,
+      "porsche": 0.7
+    }
+  }
+]
