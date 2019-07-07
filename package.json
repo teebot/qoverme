@@ -13,7 +13,8 @@
     "start:backend": "yarn workspace server run start",
     "start:webapp": "yarn workspace webapp run start",
     "start": "run-p start:*",
-    "setup": "yarn workspace server migrate && yarn workspace server seed"
+    "setup": "yarn workspace server migrate && yarn workspace server seed",
+    "heroku-postbuild": "rm -rf server/webapp && mkdir -p server/webapp && yarn workspace webapp run build && cp -R webapp/build/* server/webapp"
   },
   "dependencies": {
     "npm-run-all": "^4.1.5"

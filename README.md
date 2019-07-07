@@ -7,3 +7,7 @@
 # Run
 
 `yarn start` starts both server and client in dev mode
+
+### Dev Proxy
+
+In dev the backend is proxied from localhost:3001 to localhost:3000 (see setupProxy.js for the config)
