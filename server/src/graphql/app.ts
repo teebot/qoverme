@@ -48,8 +48,8 @@ const typeDefs = gql`
 
 const resolvers = {
   Query: {
-    me: authenticated((parent, args, ctx) => ctx.currentUser),
-    quotes: async () => await quotesRepository.all()
+    me: authenticated((parent, args, ctx) => Promise.resolve(ctx.currentUser)),
+    quotes: authenticated((parent, args, ctx) => quotesRepository.all())
   },
   Mutation: {
     authenticate: async (parent, args, ctx) => {
@@ -75,10 +75,10 @@ const resolvers = {
       );
       return { token };
     },
-    saveQuote: async (parent, args, ctx) => {
+    saveQuote: authenticated(async (parent, args, ctx) => {
       const { quote } = args;
       return await quotesRepository.save(quote);
-    }
+    })
   }
 };
 
@@ -89,29 +89,27 @@ const apolloServer = new ApolloServer({
     console.log(error);
     return error;
   },
-  context: context,
+  context,
   introspection: true,
   playground: {
     endpoint: "/gql",
-    settings: {
-      "request.credentials": "include"
-    } as any,
     tabs: [
       {
         endpoint: "/gql",
-        query: `
-        {
-          me {
-            email
-            username
-          }
-          quotes {
-            carBrand
-            plan
-            carPurchasePrice
-            age
-          }
-        }`
+        query: `{
+  me {
+    email
+    username
+  }
+  quotes {
+    id
+    carBrand
+    plan
+    carPurchasePrice
+    age
+  }
+}
+        `
       }
     ]
   }
