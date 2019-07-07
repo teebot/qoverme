@@ -1,13 +1,5 @@
 import React from "react";
-import {
-  Grid,
-  Paper,
-  Button,
-  Theme,
-  Switch,
-  Typography,
-  Box
-} from "@material-ui/core";
+import { Grid, Paper, Button, Theme, Switch, Box } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 import { History } from "history";
 import { InvoiceFreq } from "../types/invoice-freq.type";
@@ -15,7 +7,6 @@ import { Plan } from "../types/plan.type";
 import { SAVE_QUOTE_DRAFT_MUTATION } from "../gql/mutations";
 import { useMutation } from "react-apollo";
 import { QuoteParams } from "../types/quote-params.type";
-import { thisExpression } from "@babel/types";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {

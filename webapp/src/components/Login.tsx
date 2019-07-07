@@ -8,7 +8,8 @@ import {
   TextField,
   Checkbox,
   FormControlLabel,
-  Link
+  Link,
+  FormHelperText
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 import logo from "../logo.svg";
@@ -23,7 +24,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     minWidth: "350px"
   },
   button: {
-    marginTop: theme.spacing(2)
+    marginTop: theme.spacing(2),
+    textTransform: "none"
   },
   textField: {
     display: "block"
@@ -40,10 +42,11 @@ export default function Login(props: { history: History }) {
   const { history } = props;
   const [username, setUsername] = useState<string>();
   const [password, setPassword] = useState<string>();
+  const [loginError, setLoginError] = useState<string>();
 
-  const [mutate] = useMutation<{ authenticate: { token: string } }>(
-    AUTHENTICATE_MUTATION
-  );
+  const [mutate] = useMutation<{
+    authenticate: { token: string; error: string };
+  }>(AUTHENTICATE_MUTATION);
   const handleLogin = async (e: FormEvent) => {
     e.preventDefault();
 
@@ -56,10 +59,18 @@ export default function Login(props: { history: History }) {
         if (!result.data || !result.data.authenticate) {
           throw Error("Invalid Gql response");
         }
-        localStorage.setItem(
-          LOCALSTORAGE_TOKEN,
-          result.data.authenticate.token
-        );
+        const { token, error } = result.data.authenticate;
+
+        if (error) {
+          setLoginError(error);
+          return;
+        }
+
+        if (!token) {
+          throw Error("No token");
+        }
+
+        localStorage.setItem(LOCALSTORAGE_TOKEN, token);
         history.push("/quote");
       }
     });
@@ -87,6 +98,7 @@ export default function Login(props: { history: History }) {
             Welcome to Qover
           </Typography>
           <form onSubmit={handleLogin}>
+            {loginError && <FormHelperText error>{loginError}</FormHelperText>}
             <TextField
               id="username"
               label="Username"

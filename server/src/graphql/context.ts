@@ -15,7 +15,7 @@ export const context = ({ req }: { req: Request }) => {
   try {
     currentUser = jsonwebtoken.verify(authorization, JWT_SECRET);
   } catch {
-    console.warn("jwt malformed")
+    console.warn("jwt malformed");
   }
 
   return {

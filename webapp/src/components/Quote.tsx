@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  Grid,
   Paper,
   Button,
   Theme,
@@ -28,7 +27,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   grid: {
     display: "grid",
     gridAutoRows: "62px",
-    gridTemplateColumns: "140px 1fr",
+    gridTemplateColumns: "180px 1fr",
     alignItems: "center"
   },
   control: {
@@ -116,7 +115,7 @@ export default function Quote(props: QuoteProps) {
         }) => (
           <form className={classes.form} onSubmit={handleSubmit}>
             <div className={classes.grid}>
-              <label className={classes.label}>Age</label>
+              <label className={classes.label}>Age of the driver</label>
               <FormControl className={classes.control}>
                 <TextField
                   className={classes.number}
