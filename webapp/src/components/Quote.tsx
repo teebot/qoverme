@@ -96,7 +96,7 @@ export default function Quote(props: QuoteProps) {
                 <FormControl>
                   <label>Age</label>
                   <TextField
-                    type="text"
+                    type="number"
                     name="age"
                     onChange={handleChange}
                     onBlur={handleBlur}
@@ -131,7 +131,7 @@ export default function Quote(props: QuoteProps) {
                 <FormControl>
                   <label>Purchase Price</label>
                   <TextField
-                    type="text"
+                    type="number"
                     name="carPurchasePrice"
                     onChange={handleChange}
                     onBlur={handleBlur}

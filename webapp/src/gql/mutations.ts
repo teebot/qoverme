@@ -7,3 +7,9 @@ export const AUTHENTICATE_MUTATION = gql`
     }
   }
 `;
+
+export const SAVE_QUOTE_DRAFT_MUTATION = gql`
+  mutation SaveQuote($quote: QuoteInput!) {
+    saveQuote(quote: $quote)
+  }
+`;

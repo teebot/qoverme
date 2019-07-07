@@ -36,14 +36,13 @@ const plansConfig: PlanConfig[] = [
 ];
 
 export const calcPlans = (state: State): Plan[] => {
+  const { quoteParams } = state;
   return plansConfig.map(config => {
-    if (!state.carBrand || !state.age || !state.carPurchasePrice) {
-      console.warn("Invalid state");
-      return { name: "", price: 0 };
-    }
-    const basePrice = config.yearlyFeeCents[state.carBrand];
+    const basePrice = config.yearlyFeeCents[quoteParams.carBrand];
     const addedPrice =
-      (state.carPurchasePrice * 100 * config.addedFeePercents[state.carBrand]) /
+      (quoteParams.carPurchasePrice *
+        100 *
+        config.addedFeePercents[quoteParams.carBrand]) /
       100;
     const divider = state.invoiceFreq === "monthly" ? 12 : 1;
     return {

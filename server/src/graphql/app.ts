@@ -6,13 +6,14 @@ import { userRepository } from "../db/user-repository";
 import jsonwebtoken from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { JWT_SECRET } from "../../constants";
+import { quotesRepository } from "../db/quotes-repository";
 
 export const graphqlApp = express();
 
 const typeDefs = gql`
   type Query {
     me: User
-    carBrands: [String]
+    quotes: [Quote]
   }
   type User {
     id: ID!
@@ -21,12 +22,22 @@ const typeDefs = gql`
   }
   type Mutation {
     authenticate(username: String!, password: String!): Authentication
+    saveQuote(quote: QuoteInput!): ID
   }
 
-  type Plan {
+  type Quote {
+    id: ID!
     carBrand: String!
     carPurchasePrice: Float!
     age: Int!
+    plan: String!
+  }
+
+  input QuoteInput {
+    carBrand: String!
+    carPurchasePrice: Float!
+    age: Int!
+    plan: String!
   }
 
   type Authentication {
@@ -38,7 +49,7 @@ const typeDefs = gql`
 const resolvers = {
   Query: {
     me: authenticated((parent, args, ctx) => ctx.currentUser),
-    carBrands: () => ["AUDI", "BMW", "PORSCHE"]
+    quotes: async () => await quotesRepository.all()
   },
   Mutation: {
     authenticate: async (parent, args, ctx) => {
@@ -63,6 +74,10 @@ const resolvers = {
         JWT_SECRET
       );
       return { token };
+    },
+    saveQuote: async (parent, args, ctx) => {
+      const { quote } = args;
+      return await quotesRepository.save(quote);
     }
   }
 };
@@ -86,11 +101,16 @@ const apolloServer = new ApolloServer({
         endpoint: "/gql",
         query: `
         {
-            me {
-              email
-              username
-            }
-            carBrands
+          me {
+            email
+            username
+          }
+          quotes {
+            carBrand
+            plan
+            carPurchasePrice
+            age
+          }
         }`
       }
     ]

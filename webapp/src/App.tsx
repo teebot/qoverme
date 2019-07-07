@@ -10,6 +10,7 @@ import { setQuoteParams, setInvoiceFreq } from "./state/actions";
 import { gqlClient } from "./gql/client";
 import { ApolloProvider } from "react-apollo";
 import { calcPlans } from "./state/calc-plans";
+import Results from "./components/Results";
 
 const App: React.FC = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -27,11 +28,7 @@ const App: React.FC = () => {
                 exact
                 render={({ history }) => (
                   <Quote
-                    initialState={{
-                      age: state.age,
-                      carBrand: state.carBrand,
-                      carPurchasePrice: state.carPurchasePrice
-                    }}
+                    initialState={state.quoteParams}
                     history={history}
                     setQuoteParams={params => dispatch(setQuoteParams(params))}
                   />
@@ -45,10 +42,12 @@ const App: React.FC = () => {
                     plans={calcPlans(state)}
                     history={history}
                     invoiceFreq={state.invoiceFreq}
-                    setInvoiceFreq={freq => dispatch(setInvoiceFreq(freq))}
+                    quoteParams={state.quoteParams}
+                    onSetInvoiceFreq={freq => dispatch(setInvoiceFreq(freq))}
                   />
                 )}
               />
+              <Route path="/results" exact component={Results} />
             </div>
             {/* <nav>
               <ul>

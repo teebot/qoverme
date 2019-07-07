@@ -4,6 +4,9 @@ import { makeStyles } from "@material-ui/styles";
 import { History } from "history";
 import { InvoiceFreq } from "../types/invoice-freq.type";
 import { Plan } from "../types/plan.type";
+import { SAVE_QUOTE_DRAFT_MUTATION } from "../gql/mutations";
+import { useMutation } from "react-apollo";
+import { QuoteParams } from "../types/quote-params.type";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -19,18 +22,40 @@ type PriceProps = {
   history: History;
   invoiceFreq: InvoiceFreq;
   plans: Plan[];
-  setInvoiceFreq: (invoiceFreq: InvoiceFreq) => void;
+  quoteParams: QuoteParams;
+  onSetInvoiceFreq: (invoiceFreq: InvoiceFreq) => void;
 };
 
 export default function Price(props: PriceProps) {
   const classes = useStyles();
-  const { invoiceFreq, setInvoiceFreq, plans } = props;
+  const { history, invoiceFreq, onSetInvoiceFreq, plans } = props;
   const toggleInvoiceFreq = () => {
     if (invoiceFreq === "monthly") {
-      setInvoiceFreq("yearly");
+      onSetInvoiceFreq("yearly");
     } else {
-      setInvoiceFreq("monthly");
+      onSetInvoiceFreq("monthly");
     }
+  };
+
+  const [mutate] = useMutation(SAVE_QUOTE_DRAFT_MUTATION);
+  const saveQuote = async (plan: Plan) => {
+    const { age, carBrand, carPurchasePrice } = props.quoteParams;
+    await mutate({
+      variables: {
+        quote: {
+          plan: plan.name,
+          age,
+          carBrand,
+          carPurchasePrice
+        }
+      },
+      update: (_, result) => {
+        if (!result.data || !result.data.saveQuote) {
+          throw Error("Invalid Gql response");
+        }
+        history.push(`/results#${result.data.saveQuote}`);
+      }
+    });
   };
 
   return (
@@ -52,11 +77,15 @@ export default function Price(props: PriceProps) {
           {plans.map((plan, i) => (
             <div key={i}>
               {plan.name} - {plan.price}
+              <Button
+                color="primary"
+                variant="contained"
+                onClick={() => saveQuote(plan)}
+              >
+                Select plan
+              </Button>
             </div>
           ))}
-          <Button color="primary" variant="contained">
-            Select plan
-          </Button>
         </Paper>
       </Grid>
     </Grid>
