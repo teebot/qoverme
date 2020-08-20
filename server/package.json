@@ -13,7 +13,7 @@
     "@types/graphql": "^14.2.2",
     "@types/jsonwebtoken": "^8.3.2",
     "apollo-server-express": "^2.6.7",
-    "bcrypt": "^3.0.6",
+    "bcrypt": "^5.0.0",
     "chalk": "^2.4.2",
     "cookie-parser": "^1.4.4",
     "dotenv": "^8.0.0",
